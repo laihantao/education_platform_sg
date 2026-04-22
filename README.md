@@ -2,14 +2,15 @@
 
 # Project Environment
 
-1. `External Project` and `Postgres` is being containerization with Docker.
-2. NodeJs is designed to run locally with `npm run start:dev`
+1. `External` project and `Postgres` are being containerization with Docker.
+2. NodeJs is designed to run locally, with `npm run start:dev`
 
 # Prerequisites
 | Stack | Stack / Version|
 | -- | -- |
-| NodeJs|  `v24.11.1`|
-| Framework| `ExpressJS`|
+| NodeJs |  `v24.11.1`|
+| Typescript | `Version 6.0.3` |
+| Framework | `ExpressJS`|
 | ORM | `Sequelize` |
 | Database | `MySql 8.0`|
 | HTTP Client | `Axios` |

@@ -99,7 +99,7 @@ export default class ClassService {
         raw: true,
         nest: true
       })
-        ,axios.get(`http://localhost:5000/students?class=${classCode}&offset=0&limit=9999`)
+        ,axios.get(`http://localhost:5000/students?class=${classCode}&offset=0&limit=1000`)
       ]);
 
       const externalStudents = externalResponse ? externalResponse?.data?.students : [];
