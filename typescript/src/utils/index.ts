@@ -1,9 +1,9 @@
 import fs from 'fs';
 import csv from 'csv-parser';
-import { CsvItem } from 'CsvItem';
+import { CsvItem } from '../types/csvItem.js';
 import ErrorCodes from '../const/ErrorCodes.js';
 import ErrorBase from '../errors/ErrorBase.js';
-import Logger from '../config/logger';
+import Logger from '../config/logger.js';
 
 const LOG = new Logger('Utils.js');
 
@@ -20,13 +20,13 @@ export const convertCsvToJson = (filePath: string): Promise<CsvItem[]> => {
   }
   catch (error: unknown) {
 
-      if (error instanceof ErrorBase) {
-        throw error;
-      }
-
-      const stackTrace = error instanceof Error ? error.stack : String(error);
-      LOG.error(`[convertCsvToJson] Unexpected Error: ${stackTrace}`);
-
-      throw new ErrorBase('Failed to convert CSV to JSON', ErrorCodes.DATABASE_ERROR, 500);
+    if (error instanceof ErrorBase) {
+      throw error;
     }
+
+    const stackTrace = error instanceof Error ? error.stack : String(error);
+    LOG.error(`[convertCsvToJson] Unexpected Error: ${stackTrace}`);
+
+    throw new ErrorBase('Failed to convert CSV to JSON', ErrorCodes.DATABASE_ERROR, 500);
+  }
 }

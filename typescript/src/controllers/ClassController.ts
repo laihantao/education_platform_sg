@@ -1,7 +1,7 @@
 import Express, { RequestHandler } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import ClassService from '../services/ClassService.js';
-import { StudentDTO } from 'classType.js';
+import { StudentListingResponse } from 'classType.js';
 
 const ClassController = Express.Router();
 
@@ -33,11 +33,11 @@ const getStudentByClass: RequestHandler = async (req, res, next) => {
 
     await ClassService.getStudentByClassValidation({ classCode, offset, limit });
 
-    const students : StudentDTO[] = await ClassService.getStudentByClass({ classCode, offset, limit });
+    const result : StudentListingResponse = await ClassService.getStudentByClass({ classCode, offset, limit });
 
     return res.status(StatusCodes.OK).json({
-      count: Array.isArray(students) ? students.length : 0,
-      students: students
+      count: result.count,
+      students: result.students
     });
 
   } catch (error) {

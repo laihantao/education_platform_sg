@@ -38,8 +38,9 @@
 2. cd to the project directory `Example: D:\Hantao\development\interview-examination\education_platform\typescript>`
 3. Install necessary packages by `npm install`
 4. Make sure there is `Docker` running in your computer.
+5. Make sure the .env file is created with filled in database information. [Refer to Database Connection Details section below]
 5. Run NodeJs project with `npm run start:dev`
-6. It might suffer few seconds `Retry` as it is initializing the database.
+6. It might suffer few times `Retry` as it is initializing the database.
 7. When the program is ready, you will see `🚀 Server on http://localhost:3000`
 8. You can call healthcheck API to test if it is works.
 
@@ -68,7 +69,7 @@ Ensure a schema named `school-administration-system` exists in your MySQL instan
 1. In DBeaver, right-click on `Database Navigator` at left-hand side. (Or just press hotkey `Ctrl + Shift + N`)
 2. Select `MySql`.
 3. Use the following configuration:
-    - **Host**: `127.0.0.1`
+    - **Host**: `localhost` OR `127.0.0.1`
     - **Port**: `33306` (Mapped via Docker)
     - **Database**: `school-administration-system`
     - **Username**: `root`

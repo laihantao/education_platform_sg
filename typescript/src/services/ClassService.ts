@@ -1,6 +1,6 @@
 import { Student, Class, TeacherWorkload, Enrollment } from '../models/index.js';
 import * as axiosModule from 'axios';
-import { GetStudentParams, StudentDTO } from '../types/classType.js';
+import { GetStudentParams, StudentDTO, StudentListingResponse } from '../types/classType.js';
 import ErrorCodes from '../const/ErrorCodes.js';
 import ErrorBase from '../errors/ErrorBase.js';
 import Logger from '../config/logger.js';
@@ -66,7 +66,7 @@ export default class ClassService {
     }
   }
 
-  public static async getStudentByClass(params: GetStudentParams): Promise<StudentDTO[]> {
+  public static async getStudentByClass(params: GetStudentParams): Promise<StudentListingResponse> {
 
     try {
       const { classCode, offset, limit } = params;
@@ -113,7 +113,12 @@ export default class ClassService {
 
       const paginatedStudents: StudentDTO[] = allStudents.slice(offset, offset + limit);
 
-      return paginatedStudents;
+      const result : StudentListingResponse = {
+        count: Array.isArray(allStudents) ? allStudents.length : 0,
+        students: paginatedStudents ? paginatedStudents : []
+      }
+
+      return result;
     }
     catch (error: any) {
 

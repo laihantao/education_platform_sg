@@ -3,7 +3,7 @@ import ErrorCodes from '../const/ErrorCodes.js';
 import ErrorBase from '../errors/ErrorBase.js';
 import Logger from '../config/logger.js';
 import 'dotenv/config';
-import { CsvItem } from 'CsvItem.js';
+import { CsvItem } from 'csvItem.js';
 
 const DEFAULT_LIMIT = 10485760;
 const LOG = new Logger('DataImportService.js');
@@ -52,7 +52,7 @@ export default class DataImportService {
             }
 
             for (const [index, row] of data.entries()) {
-                const requiredFields = ['teacherEmail', 'teacherName', 'studentEmail', 'studentName', 'classCode', 'classname', 'subjectCode', 'subjectName', 'toDelete'];
+                const requiredFields = ['teacherEmail', 'teacherName', 'studentEmail', 'studentName', 'classCode', 'classname', 'subjectCode', 'subjectName', 'toDelete']; // Handle wrong naming convention classname
                 for (const field of requiredFields) {
                     if (!row[field] || typeof row[field] !== 'string' || row[field].trim() === '') {
                         throw new ErrorBase(`Row ${index + 1}: Field "${field}" is required and must be a non-empty string`, ErrorCodes.INVALID_CSV_DATA_COLUMN, 400);
@@ -104,7 +104,7 @@ export default class DataImportService {
             for (const row of data) {
                 teachers.set(row.teacherEmail, row.teacherName);
                 students.set(row.studentEmail, row.studentName);
-                classes.set(row.classCode, row.classname);
+                classes.set(row.classCode, row.classname); // Handle wrong naming convention classname
                 subjects.set(row.subjectCode, row.subjectName);
             }
 

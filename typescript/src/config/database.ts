@@ -1,5 +1,5 @@
 import { Sequelize } from 'sequelize';
-import Logger from './logger';
+import Logger from './logger.js';
 
 const LOG = new Logger('database.js');
 const {

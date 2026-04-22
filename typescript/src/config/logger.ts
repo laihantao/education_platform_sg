@@ -12,7 +12,7 @@ const {
 /**
  * this customFormat will format the text and color only ERROR message to red
  */
-const customFormat = printf(info => {
+const customFormat = printf((info: any) => {
   const message = `${info.timestamp}\t[${info.metadata.filename}]\t${info.level}\t${info.message}`;
 
   if (info.level === 'ERROR' || info.level === 'WARN') {
