@@ -1,0 +1,205 @@
+{
+  "info": {
+    "_postman_id": "b5d2effd-a278-4356-9463-e34383a1e315",
+    "name": "school-administration-system",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "44821367"
+  },
+  "item": [
+    {
+      "name": "Q1: DataUpload",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "data",
+              "contentType": "multipart/form-data",
+              "type": "file",
+              "src": "/D:/Hantao/development/interview-examination/education_platform/dataset/data.sample - Copy.csv"
+            }
+          ]
+        },
+        "url": {
+          "raw": "localhost:3000/api/upload",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "upload"
+          ]
+        },
+        "description": "Upload file to school-administration-system"
+      },
+      "response": []
+    },
+    {
+      "name": "Q2: StudentListing",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": ""
+        },
+        "url": {
+          "raw": "localhost:3000/api/class/P2-1/students?offset=0&limit=100",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "class",
+            "P2-1",
+            "students"
+          ],
+          "query": [
+            {
+              "key": "offset",
+              "value": "0"
+            },
+            {
+              "key": "limit",
+              "value": "100"
+            }
+          ]
+        },
+        "description": "Upload file to school-administration-system"
+      },
+      "response": []
+    },
+    {
+      "name": "Q3: Update ClassName",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"className\": \"Testing Update Class Name\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "localhost:3000/api/class/P2-1",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "class",
+            "P2-1"
+          ]
+        },
+        "description": "Upload file to school-administration-system"
+      },
+      "response": []
+    },
+    {
+      "name": "Q4: WorkloadReport",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": ""
+        },
+        "url": {
+          "raw": "localhost:3000/api/reports/workload",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "reports",
+            "workload"
+          ]
+        },
+        "description": "Upload file to school-administration-system"
+      },
+      "response": []
+    },
+    {
+      "name": "Healtcheck",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "data",
+              "contentType": "multipart/form-data",
+              "type": "file",
+              "value": null
+            }
+          ]
+        },
+        "url": {
+          "raw": "localhost:3000/api/healthcheck",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "healthcheck"
+          ]
+        },
+        "description": "Healthcheck for application"
+      },
+      "response": []
+    },
+    {
+      "name": "Get Student List (External)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "localhost:5000/students?class=2&offset=0&limit=9999",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            "students"
+          ],
+          "query": [
+            {
+              "key": "class",
+              "value": "2"
+            },
+            {
+              "key": "offset",
+              "value": "0"
+            },
+            {
+              "key": "limit",
+              "value": "9999"
+            }
+          ]
+        },
+        "description": "Retrieving student list from external"
+      },
+      "response": []
+    }
+  ]
+}

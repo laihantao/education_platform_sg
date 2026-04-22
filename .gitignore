@@ -1,0 +1,4 @@
+/typescript/coverage/
+/typescript/node_modules/
+
+/typescript/.env
