@@ -1,8 +1,8 @@
 import Express from 'express';
-import DataImportController from './controllers/DataImportController';
-import HealthcheckController from './controllers/HealthcheckController';
-import ReportingController from './controllers/ReportingController';
-import ClassController from './controllers/ClassController';
+import DataImportController from './controllers/DataImportController.js';
+import HealthcheckController from './controllers/HealthcheckController.js';
+import ReportingController from './controllers/ReportingController.js';
+import ClassController from './controllers/ClassController.js';
 
 const router = Express.Router();
 

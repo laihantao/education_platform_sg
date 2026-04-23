@@ -14,7 +14,7 @@ const startApplication = async (retryCount: number) => {
     await sequelize.authenticate();
     LOG.info('\n\n##################################\n✅ DB Connection established.\n##################################\n');
 
-    await sequelize.sync({ force: true });
+    await sequelize.sync({ alter: true }); // Prohibit "force" mode in production
     LOG.info('\n\n##################################\n✅ Tables synced.\n##################################\n');
 
     App.listen(PORT, () => {

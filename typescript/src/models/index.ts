@@ -9,7 +9,7 @@ import Logger from '../config/logger.js';
 
 const LOG = new Logger('server.js');
 
-// 1. 组合成一个对象
+// 1. Define the models we have
 const models = {
   Student,
   Class,
@@ -19,7 +19,7 @@ const models = {
   Enrollment,
 };
 
-// 2. 执行每个模型的关联逻辑
+// 2. Loop through and process the association
 Object.values(models).forEach((model: any) => {
   if (model.associate) {
     model.associate(models);

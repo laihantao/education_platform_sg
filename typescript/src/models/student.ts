@@ -1,6 +1,7 @@
 import pkg from 'sequelize';
-const { Model, DataTypes } = pkg;
 import sequelize from '../config/database.js';
+
+const { Model, DataTypes } = pkg;
 
 class Student extends Model {
   public id!: number;
@@ -22,7 +23,7 @@ Student.init(
     email: {
       type: DataTypes.STRING,
       unique: true,
-      allowNull: false // 唯一标识符 [cite: 81]
+      allowNull: false
     },
     name: {
       type: DataTypes.STRING,

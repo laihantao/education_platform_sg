@@ -1,0 +1,6 @@
+teacherEmail,teacherName,studentEmail,studentName,classCode,classname,subjectCode,subjectName,toDelete
+teacher1@gmail.com,Teacher 1,commonstudent1@gmail.com,Common Student 1,P1-1,,MATHS,Mathematics,0
+teacher1@gmail.com,Teacher 1.2,commonstudent1@gmail.com,Common Student 1.2,P1-1,P1 Integrity,MATHS,Mathematics,0
+teacher1@gmail.com,Teacher 1.3,commonstudent1@gmail.com,Common Student 1.3,P1-1,P1 Integrity,MATHS,Mathematics,1
+teacher1@gmail.com,Teacher 1.4,commonstudent1@gmail.com,Common Student 1.4,P1-1,P1 Integrity,MATHS,Mathematics,1
+teacher1@gmail.com,Teacher 1.5,commonstudent1@gmail.com,Common Student 1.5,P1-1,P1 Integrity,MATHS,Mathematics,0

@@ -19,7 +19,7 @@ const dataImportHandler: RequestHandler = async (req, res, next) => {
 
     await DataImportService.processImport(data);
 
-    // Here must use "sendStatus" instead of "status" to end the response,
+    // Here should use "sendStatus" instead of "status" to end the response, because status is just set status
     // Otherwise it will just hang there
     return res.sendStatus(StatusCodes.NO_CONTENT);
 
@@ -29,7 +29,22 @@ const dataImportHandler: RequestHandler = async (req, res, next) => {
   }
 };
 
-DataImportController.post('/upload', upload.single('data'), dataImportHandler);
+// DataImportController.post('/upload', upload.single('data'), dataImportHandler);
 
+DataImportController.post('/upload', (req, res, next) => {
+  upload.single('data')(req, res, (err) => {
+    if (err) {
+      // Catch Multer-specific errors
+      if (err.code === 'LIMIT_UNEXPECTED_FILE') {
+        return res.status(400).json({
+            error: 'Too many files. Only one CSV file is allowed per upload.'
+        });
+      }
+      return res.status(400).json({ error: err.message });
+    }
+
+    next();
+  });
+}, dataImportHandler);
 
 export default DataImportController;

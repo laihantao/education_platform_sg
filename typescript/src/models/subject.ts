@@ -1,6 +1,7 @@
 import pkg from 'sequelize';
-const { Model, DataTypes } = pkg;
 import sequelize from '../config/database.js';
+
+const { Model, DataTypes } = pkg;
 
 class Subject extends Model {
   public id!: number;

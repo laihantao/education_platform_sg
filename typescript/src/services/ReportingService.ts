@@ -33,7 +33,7 @@ export default class ReportingService {
         // Group by Teacher ID and Subject ID to get the count per subject
         group: ['teacherId', 'subjectId'],
         raw: true,
-        nest: true // Keeps the included models in nested objects
+        nest: true
       }) as unknown as WorkloadQueryResult[];
 
       // 2. Format the data to match the expected JSON response
@@ -44,7 +44,7 @@ export default class ReportingService {
         const subjectData: SubjectInfo = {
           subjectCode: curr.Subject.subjectCode,
           subjectName: curr.Subject.subjectName,
-          numberOfClasses: parseInt(curr.numberOfClasses as string, 10)
+          numberOfClasses: parseInt(curr.numberOfClasses as string, 10) // In case if count datatype returned by Sequelize is string
         };
 
         if (!acc[teacherName]) {

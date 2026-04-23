@@ -1,6 +1,7 @@
 import pkg from 'sequelize';
-const { Model, DataTypes } = pkg;
 import sequelize from '../config/database.js';
+
+const { Model, DataTypes } = pkg;
 
 class Class extends Model {
   public id!: number;
@@ -22,11 +23,11 @@ Class.init(
     classCode: {
       type: DataTypes.STRING,
       unique: true,
-      allowNull: false // 对应 CSV 中的 classCode [cite: 77]
+      allowNull: false // 对应 CSV 中的 classCode
     },
     className: {
       type: DataTypes.STRING,
-      allowNull: false // 对应 CSV 中的 className [cite: 77]
+      allowNull: false // 对应 CSV 中的 className
     }
   },
   {
