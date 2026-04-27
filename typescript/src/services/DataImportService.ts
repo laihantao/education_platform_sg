@@ -1,9 +1,10 @@
 import { sequelize, Teacher, Student, Class, Subject, TeacherWorkload, Enrollment } from '../models/index.js';
-import ErrorCodes from '../const/ErrorCodes.js';
 import ErrorBase from '../errors/ErrorBase.js';
 import Logger from '../config/logger.js';
 import 'dotenv/config';
 import { CsvItem } from 'csvItem.js';
+import { InvalidInputError, InvalidCsvColumnError, InvalidCsvFormatError } from '../errors/ValidationErrors.js';
+import { InternalServerError } from '../errors/GeneralErrors.js';
 
 const DEFAULT_LIMIT = 10485760;
 const LOG = new Logger('DataImportService.js');
@@ -12,7 +13,7 @@ export default class DataImportService {
 
     public static async processImportValidation(file) {
         if (!file) {
-            throw new ErrorBase('File is required', ErrorCodes.INVALID_INPUT, 400);
+            throw new InvalidInputError('File is required');
         }
 
         const allowedMimeTypes = [
@@ -22,24 +23,24 @@ export default class DataImportService {
         ];
 
         if (!allowedMimeTypes.includes(file.mimetype)) {
-            throw new ErrorBase('Invalid file type. Only CSV files are allowed', ErrorCodes.INVALID_INPUT, 400);
+            throw new InvalidInputError('Invalid file type. Only CSV files are allowed');
         }
 
         if (!file.originalname.toLowerCase().endsWith('.csv')) {
-            throw new Error('Only .csv files allowed');
+            throw new InvalidInputError('Only .csv files allowed');
         }
         const envValue = process.env.MAX_IMPORT_FILE_SIZE;
 
         const limit = envValue ? parseInt(envValue, 10) : DEFAULT_LIMIT;
 
         if (Number(file.size) > limit) { // 10MB limit
-            throw new ErrorBase('File size exceeds the limit of 10MB', ErrorCodes.INVALID_INPUT, 400);
+            throw new InvalidInputError('File size exceeds the limit of 10MB')
         }
 
         LOG.info(`Received files: ${file.originalname} \nMIME type: ${file.mimetype} \nSize: ${file.size}`);
 
         if (!file.path) {
-            throw new ErrorBase('File path is missing', ErrorCodes.INVALID_INPUT, 400);
+            throw new InvalidInputError('File path is missing');
         }
 
     }
@@ -48,41 +49,42 @@ export default class DataImportService {
         try {
 
             if (!Array.isArray(data) || data.length === 0) {
-                throw new ErrorBase('CSV data is empty or not in expected format', ErrorCodes.INVALID_INPUT, 400);
+                throw new InvalidInputError('CSV data is empty or not in expected format');
             }
 
             for (const [index, row] of data.entries()) {
+                const rowNum = index + 1;
                 const requiredFields = ['teacherEmail', 'teacherName', 'studentEmail', 'studentName', 'classCode', 'classname', 'subjectCode', 'subjectName', 'toDelete']; // Handle wrong naming convention classname
                 for (const field of requiredFields) {
                     if (!row[field] || typeof row[field] !== 'string' || row[field].trim() === '') {
-                        throw new ErrorBase(`Row ${index + 1}: Field "${field}" is required and must be a non-empty string`, ErrorCodes.INVALID_CSV_DATA_COLUMN, 400);
+                        throw new InvalidCsvColumnError(`Row ${rowNum}: Field "${field}" is required`);
                     }
                 }
 
                 if (row.toDelete !== '0' && row.toDelete !== '1') {
-                    throw new ErrorBase(`Row ${index + 1}: "toDelete" field must be either '0' or '1'`, ErrorCodes.INVALID_CSV_DATA_FORMAT, 400);
+                    throw new InvalidCsvFormatError(`Row ${rowNum}: "toDelete" must be '0' or '1'`);
                 }
 
                 // Validate teacher & email whether it is valid email format
                 if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(row.teacherEmail)) {
-                    throw new ErrorBase(`Row ${index + 1}: "teacherEmail" is not a valid email address`, ErrorCodes.INVALID_CSV_DATA_FORMAT, 400);
+                    throw new InvalidCsvFormatError(`Row ${rowNum}: "teacherEmail" is invalid`);
                 }
 
                 if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(row.studentEmail)) {
-                    throw new ErrorBase(`Row ${index + 1}: "studentEmail" is not a valid email address`, ErrorCodes.INVALID_CSV_DATA_FORMAT, 400);
+                    throw new InvalidCsvFormatError(`Row ${rowNum}: "studentEmail" is invalid`);
                 }
             }
         }
         catch (error: unknown) {
 
-        if (error instanceof ErrorBase) {
-            throw error;
-        }
+            if (error instanceof ErrorBase) {
+                throw error;
+            }
 
-        const stackTrace = error instanceof Error ? error.stack : String(error);
-        LOG.error(`[DataImportService.processImportDataValidation] Unexpected Error: ${stackTrace}`);
+            const stackTrace = error instanceof Error ? error.stack : String(error);
+            LOG.error(`[DataImportService.processImportDataValidation] Unexpected Error: ${stackTrace}`);
 
-        throw new ErrorBase('Failed to validate import data due to database error', ErrorCodes.INVALID_INPUT, 500);
+            throw new InternalServerError('Failed to validate import data');
         }
     }
 
@@ -100,7 +102,8 @@ export default class DataImportService {
             const classes = new Map<string, string>();
             const subjects = new Map<string, string>();
 
-            // 1.2 Loop through the data to populate the maps, it will make sure the teacherName (etc) is latest row
+            // 1.2 Loop through the data to populate the maps, it will make sure the teacherName (etc) is latest row.
+            // upsert will take the primary key
             for (const row of data) {
                 teachers.set(row.teacherEmail, row.teacherName);
                 students.set(row.studentEmail, row.studentName);
@@ -140,7 +143,7 @@ export default class DataImportService {
                     paranoid: false // Search even if it was soft-deleted before
                 });
 
-                // 2.4 If it was soft-deleted, restore it
+                // 2.4 If it was soft-deleted (Which mean this teacher taught this, but now dont have active student), restore it
                 if (workload?.deletedAt) {
                     await workload.restore({ transaction });
                 }
@@ -220,9 +223,10 @@ export default class DataImportService {
             }
 
             const stackTrace = error instanceof Error ? error.stack : String(error);
+
             LOG.error(`[DataImportService.processImport] Unexpected Error: ${stackTrace}`);
 
-            throw new ErrorBase('Failed to process import data due to unexpected error', ErrorCodes.UNEXPECTED_ERROR, 500);
+            throw new InternalServerError('Unexpected Error: Failed to process import data');
 
         }
     }

@@ -4,6 +4,7 @@ import ErrorCodes from '../const/ErrorCodes.js';
 import ErrorBase from '../errors/ErrorBase.js';
 import Logger from '../config/logger.js';
 import {WorkloadQueryResult, TeacherReport, SubjectInfo} from '../types/reportingType.js'
+import { InternalServerError } from '../errors/GeneralErrors.js';
 
 const LOG = new Logger('ReportingService.js');
 
@@ -68,7 +69,7 @@ export default class ReportingService {
       const stackTrace = error instanceof Error ? error.stack : String(error);
       LOG.error(`[ReportService.teacherWorkLoadReport] Database Task Failed: ${stackTrace}`);
 
-      throw new ErrorBase('Failed to generate report', ErrorCodes.DATABASE_ERROR, 500);
+      throw new InternalServerError('Unexpected Error: Failed to generate report');
     }
   }
 }

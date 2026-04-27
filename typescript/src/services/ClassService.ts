@@ -1,9 +1,11 @@
 import { Student, Class, TeacherWorkload, Enrollment } from '../models/index.js';
 import * as axiosModule from 'axios';
 import { GetStudentParams, StudentDTO, StudentListingResponse } from '../types/classType.js';
-import ErrorCodes from '../const/ErrorCodes.js';
 import ErrorBase from '../errors/ErrorBase.js';
 import Logger from '../config/logger.js';
+import { InvalidInputError } from '../errors/ValidationErrors.js';
+import { InternalServerError, ExternalServiceError } from '../errors/GeneralErrors.js';
+
 
 const LOG = new Logger('ClassService.js');
 const axios:any = axiosModule.default || axiosModule;
@@ -14,12 +16,12 @@ export default class ClassService {
 
     // Validate classCode
     if (!classCode || typeof classCode !== 'string' || classCode.trim() === '') {
-      throw new ErrorBase('classCode is required', ErrorCodes.INVALID_INPUT, 400);
+      throw new InvalidInputError('classCode is required');
     }
 
     // Validate className
     if (!className || typeof className !== 'string' || className.trim() === '') {
-      throw new ErrorBase('className is required', ErrorCodes.INVALID_INPUT, 400);
+      throw new InvalidInputError('className is required');
     }
   }
 
@@ -33,7 +35,7 @@ export default class ClassService {
 
       // If affected count is 0，which mean classCode not even existed
       if (updatedRows === 0) {
-        throw new ErrorBase(`Class with code ${classCode} not found`, ErrorCodes.NOT_FOUND, 400);
+        throw new InvalidInputError(`Class with code ${classCode} not found`);
       }
 
     } catch (error: unknown) {
@@ -45,7 +47,7 @@ export default class ClassService {
       const stackTrace = error instanceof Error ? error.stack : String(error);
       LOG.error(`[ClassService.updateClassName] Unexpected Error: ${stackTrace}`);
 
-      throw new ErrorBase('Failed to update class name due to database error', ErrorCodes.DATABASE_ERROR, 500);
+      throw new InternalServerError('Unexpected Error: Failed to update class name');
     }
   }
 
@@ -54,15 +56,15 @@ export default class ClassService {
     const { classCode, offset, limit } = param;
 
     if (!classCode || typeof classCode !== 'string' || classCode.trim() === '') {
-      throw new ErrorBase('Class code is required', ErrorCodes.INVALID_INPUT, 400);
+      throw new InvalidInputError('Class code is required');
     }
 
     if (offset === undefined || offset === null || isNaN(Number(offset)) || Number(offset) < 0) {
-      throw new ErrorBase('Offset must be a non-negative integer', ErrorCodes.INVALID_INPUT, 400);
+      throw new InvalidInputError('Offset must be a non-negative integer');
     }
 
     if (limit === undefined || limit === null || isNaN(Number(limit)) || Number(limit) <= 0) {
-      throw new ErrorBase('Limit must be a positive integer', ErrorCodes.INVALID_INPUT, 400);
+      throw new InvalidInputError('Limit must be a positive integer');
     }
   }
 
@@ -99,7 +101,10 @@ export default class ClassService {
         raw: true,
         nest: true
       })
-        ,axios.get(`http://localhost:5000/students?class=${classCode}&offset=0&limit=1000`)
+        , axios.get(`http://localhost:5000/students`, {
+          params: { class: classCode, offset: 0, limit: 1000 },
+          timeout: 3000
+        })
       ]);
 
       const externalStudents = externalResponse ? externalResponse?.data?.students : [];
@@ -132,9 +137,10 @@ export default class ClassService {
       if (axios.isAxiosError(error)) {
         LOG.error(`External Student API error: ${error.message}`);
 
-        throw new ErrorBase('External student service is temporarily unavailable', ErrorCodes.EXTERNAL_SERVICE_ERROR, 500);
+        throw new ExternalServiceError('External student service is temporarily unavailable');
       }
-      throw error;
+
+      throw new InternalServerError('Unexpected Error: Failed to get student list by class name');
     }
   }
 }
